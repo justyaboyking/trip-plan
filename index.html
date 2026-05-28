@@ -494,7 +494,7 @@
   <div class="map-placeholder" id="map-placeholder" onclick="initMap()">
     <div class="big">🗺️</div>
     <div>Click to load map</div>
-    <div class="sub">4 cities · 4 countries · 11 days</div>
+    <div class="sub">6 cities · 5 countries · 11 days</div>
   </div>
   <div id="map" style="display:none;"></div>
 
@@ -945,14 +945,18 @@ function initMap() {
   const cities = [
     { name: 'Belluno', coords: [46.142, 12.215], day: 'Jul 21-23 · 2 nights', icon: '🏔️', places: ['Dolomieten', 'Cortina d\'Ampezzo', 'Lago di Santa Croce'] },
     { name: 'Lake Bled', coords: [46.369, 14.114], day: 'Jul 23-25 · 2 nights', icon: '🏞️', places: ['Bled Castle', 'Bled Island Church', 'Vintgar Gorge'] },
-    { name: 'Vienna', coords: [48.208, 16.373], day: 'Jul 25-28 · 3 nights', icon: '🌆', places: ['Schönbrunn', 'Stephansdom', 'Naschmarkt', 'Das Gym'] },
-    { name: 'Budapest', coords: [47.497, 19.040], day: 'Jul 28-31 · 3 nights', icon: '🌉', places: ['Buda Castle', 'Fisherman\'s Bastion', 'Parliament', 'Flex Gym'] }
+    { name: 'Graz', coords: [47.071, 15.439], day: 'Jul 25-26 · 1 night', icon: '🏰', places: ['Uhrturm', 'Kunsthaus', 'Ultimate Gym'] },
+    { name: 'Vienna', coords: [48.208, 16.373], day: 'Jul 26-28 · 2 nights', icon: '🌆', places: ['Schönbrunn', 'Stephansdom', 'Naschmarkt', 'Das Gym'] },
+    { name: 'Bratislava', coords: [48.149, 17.107], day: 'Jul 28-29 · 1 night', icon: '🏛️', places: ['Bratislava Castle', 'Old Town', 'FitCamp'] },
+    { name: 'Budapest', coords: [47.497, 19.040], day: 'Jul 29-31 · 2 nights', icon: '🌉', places: ['Buda Castle', 'Fisherman\'s Bastion', 'Parliament', 'Flex Gym'] }
   ];
 
   const routeLabels = [
     { from: [46.142, 12.215], to: [46.369, 14.114], label: '5-6h · ~€30', pos: 0.5 },
-    { from: [46.369, 14.114], to: [48.208, 16.373], label: '~5h · ~€35', pos: 0.5 },
-    { from: [48.208, 16.373], to: [47.497, 19.040], label: '2.5h · ~€20', pos: 0.5 }
+    { from: [46.369, 14.114], to: [47.071, 15.439], label: '~2h · €15-€20', pos: 0.5 },
+    { from: [47.071, 15.439], to: [48.208, 16.373], label: '2.5h · €20-€30', pos: 0.5 },
+    { from: [48.208, 16.373], to: [48.149, 17.107], label: '1h · €12.30', pos: 0.5 },
+    { from: [48.149, 17.107], to: [47.497, 19.040], label: '2.5h · €7.90', pos: 0.5 }
   ];
 
   const markers = [];
@@ -973,7 +977,9 @@ function initMap() {
   const routeCoords = [
     [46.142, 12.215], // Belluno
     [46.369, 14.114], // Bled
+    [47.071, 15.439], // Graz
     [48.208, 16.373], // Vienna
+    [48.149, 17.107], // Bratislava
     [47.497, 19.040]  // Budapest
   ];
 
