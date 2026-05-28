@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>up</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0a0a0a;
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .container {
+      max-width: 600px;
+      width: 100%;
+      padding: 2rem;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 2rem;
+    }
+    .logo { font-size: 1.5rem; font-weight: 700; letter-spacing: 4px; color: #888; }
+    .date { font-size: 0.85rem; color: #555; }
+    
+    .goal-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .goal-label { font-size: 0.9rem; color: #888; }
+    .goal-amount { font-size: 0.9rem; color: #aaa; }
+    
+    .progress-container {
+      background: #1a1a1a;
+      border-radius: 12px;
+      height: 24px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #22c55e, #16a34a);
+      border-radius: 12px;
+      transition: width 0.8s ease;
+      width: 0%;
+    }
+    .progress-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: #141414;
+      border-radius: 12px;
+      padding: 1rem;
+      text-align: center;
+      border: 1px solid #1f1f1f;
+    }
+    .stat-value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .stat-label {
+      font-size: 0.7rem;
+      color: #666;
+      margin-top: 0.3rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .section-title {
+      font-size: 0.75rem;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 1rem;
+    }
+
+    .shift-list {
+      list-style: none;
+    }
+    .shift-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      background: #141414;
+      border-radius: 10px;
+      margin-bottom: 0.5rem;
+      border: 1px solid #1f1f1f;
+    }
+    .shift-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .shift-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .shift-dot.hupple { background: #22c55e; }
+    .shift-dot.packer { background: #3b82f6; }
+    .shift-dot.other { background: #a855f7; }
+    .shift-name { font-size: 0.85rem; color: #ccc; }
+    .shift-date { font-size: 0.7rem; color: #555; }
+    .shift-amount { font-weight: 600; color: #22c55e; font-size: 0.9rem; }
+
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: #444;
+    }
+    .empty-state .icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .empty-state p { font-size: 0.9rem; }
+
+    .trip-card {
+      background: linear-gradient(135deg, #1a1a1a, #141414);
+      border: 1px solid #22c55e22;
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+    .trip-left .trip-label {
+      font-size: 0.7rem;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .trip-left .trip-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-top: 0.3rem;
+    }
+    .trip-right {
+      text-align: right;
+    }
+    .trip-cost {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #22c55e;
+    }
+    .trip-label2 {
+      font-size: 0.7rem;
+      color: #555;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 0.9rem;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      color: #888;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: 0.2s;
+      text-align: center;
+    }
+    .btn:hover {
+      border-color: #22c55e44;
+      color: #ccc;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: #1a1a1a;
+      border-radius: 16px;
+      padding: 1.5rem;
+      width: 90%;
+      max-width: 400px;
+      border: 1px solid #2a2a2a;
+    }
+    .modal h3 { font-size: 1rem; margin-bottom: 1rem; color: #fff; }
+    .modal label { font-size: 0.8rem; color: #888; display: block; margin-bottom: 0.3rem; }
+    .modal select, .modal input {
+      width: 100%;
+      padding: 0.7rem;
+      background: #0a0a0a;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      outline: none;
+    }
+    .modal select:focus, .modal input:focus {
+      border-color: #22c55e44;
+    }
+    .modal .btn-row {
+      display: flex;
+      gap: 0.75rem;
+    }
+    .modal .btn-row button {
+      flex: 1;
+      padding: 0.7rem;
+      border-radius: 8px;
+      border: none;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .modal .btn-cancel {
+      background: #1f1f1f;
+      color: #888;
+    }
+    .modal .btn-save {
+      background: #22c55e;
+      color: #000;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<div class="container" id="app">
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">⇡</div>
+    <div class="date" id="currentDate"></div>
+  </div>
+
+  <!-- Trip Card -->
+  <div class="trip-card">
+    <div class="trip-left">
+      <div class="trip-label">Next move</div>
+      <div class="trip-title">Rabat 🇲🇦</div>
+    </div>
+    <div class="trip-right">
+      <div class="trip-cost" id="tripProgress">€0</div>
+      <div class="trip-label2">of €1.500 saved</div>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="goal-row">
+    <span class="goal-label">Total saved</span>
+    <span class="goal-amount" id="totalSaved">€0</span>
+  </div>
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="progress-label" id="progressLabel">0%</div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-card">
+      <div class="stat-value" id="shiftsCount">0</div>
+      <div class="stat-label">Shifts</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="weeklyAvg">€0</div>
+      <div class="stat-label">Avg/wk</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="daysLeft">17</div>
+      <div class="stat-label">Weeks left</div>
+    </div>
+  </div>
+
+  <!-- Shifts -->
+  <div class="section-title">Activity</div>
+  <ul class="shift-list" id="shiftList">
+    <li class="empty-state">
+      <div class="icon">⏳</div>
+      <p>No shifts logged yet</p>
+    </li>
+  </ul>
+
+  <!-- Add button -->
+  <button class="btn" id="addBtn" style="margin-top:1rem;">+ Log a shift</button>
+  <button class="btn" id="resetBtn" style="margin-top:0.5rem;font-size:0.7rem;color:#444;">Reset</button>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h3>Log shift</h3>
+    <label>Type</label>
+    <select id="shiftType">
+      <option value="hupple">Hupple</option>
+      <option value="packer">Packer</option>
+      <option value="other">Other</option>
+    </select>
+    <label>Hours</label>
+    <input type="number" id="shiftHours" step="0.5" min="0" value="7">
+    <label>Rate (€/h)</label>
+    <input type="number" id="shiftRate" step="0.5" min="0" value="13">
+    <div class="btn-row">
+      <button class="btn-cancel" id="modalCancel">Cancel</button>
+      <button class="btn-save" id="modalSave">+ Add</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const STORAGE_KEY = 'up_shifts';
+  const RABAT_GOAL = 1500;
+
+  function loadShifts() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }
+
+  function saveShifts(shifts) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(shifts));
+  }
+
+  function formatDate(d) {
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return `${d.getDate()} ${months[d.getMonth()]}`;
+  }
+
+  function render() {
+    const shifts = loadShifts();
+    const total = shifts.reduce((s, sh) => s + sh.amount, 0);
+    const today = new Date();
+    const endDate = new Date(2026, 10, 2); // Nov 2
+    const weeksLeft = Math.max(0, Math.ceil((endDate - today) / (7*24*60*60*1000)));
+    const avgWeekly = shifts.length > 0 ? (total / Math.max(1, weeksLeft > 0 ? (22 - weeksLeft) : shifts.length)) : 0;
+
+    // Update UI
+    document.getElementById('totalSaved').textContent = '€' + total;
+    document.getElementById('tripProgress').textContent = '€' + Math.min(total, RABAT_GOAL);
+    document.getElementById('shiftsCount').textContent = shifts.length;
+    document.getElementById('weeklyAvg').textContent = '€' + Math.round(avgWeekly);
+    document.getElementById('daysLeft').textContent = weeksLeft;
+    document.getElementById('currentDate').textContent = formatDate(today);
+
+    // Progress bar
+    const pct = Math.min(100, (total / RABAT_GOAL) * 100);
+    const bar = document.getElementById('progressBar');
+    bar.style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = Math.round(pct) + '%';
+
+    // Shifts list
+    const list = document.getElementById('shiftList');
+    if (shifts.length === 0) {
+      list.innerHTML = `<li class="empty-state"><div class="icon">⏳</div><p>No shifts logged yet</p></li>`;
+    } else {
+      list.innerHTML = [...shifts].reverse().map((sh, i) => {
+        const isHupple = sh.type === 'hupple';
+        const dotClass = sh.type === 'hupple' ? 'hupple' : sh.type === 'packer' ? 'packer' : 'other';
+        const label = sh.type === 'hupple' ? 'Hupple' : sh.type === 'packer' ? 'Packer' : 'Other';
+        const dateStr = sh.date || 'today';
+        return `<li class="shift-item">
+          <div class="shift-left">
+            <div class="shift-dot ${dotClass}"></div>
+            <div>
+              <div class="shift-name">${label} · ${sh.hours}h @ €${sh.rate}/h</div>
+              <div class="shift-date">${dateStr}</div>
+            </div>
+          </div>
+          <div class="shift-amount">+€${sh.amount}</div>
+        </li>`;
+      }).join('');
+    }
+  }
+
+  function addShift(type, hours, rate) {
+    const shifts = loadShifts();
+    const amount = Math.round(hours * rate);
+    const now = new Date();
+    shifts.push({
+      id: Date.now(),
+      type,
+      hours: parseFloat(hours),
+      rate: parseFloat(rate),
+      amount,
+      date: formatDate(now),
+      timestamp: now.toISOString()
+    });
+    saveShifts(shifts);
+    render();
+  }
+
+  function resetAll() {
+    if (confirm('Reset all data?')) {
+      localStorage.removeItem(STORAGE_KEY);
+      render();
+    }
+  }
+
+  // Event listeners
+  document.getElementById('addBtn').addEventListener('click', () => {
+    document.getElementById('modal').classList.add('show');
+  });
+
+  document.getElementById('modalCancel').addEventListener('click', () => {
+    document.getElementById('modal').classList.remove('show');
+  });
+
+  document.getElementById('modalSave').addEventListener('click', () => {
+    const type = document.getElementById('shiftType').value;
+    const hours = parseFloat(document.getElementById('shiftHours').value) || 0;
+    const rate = parseFloat(document.getElementById('shiftRate').value) || 0;
+    if (hours <= 0 || rate <= 0) return;
+    addShift(type, hours, rate);
+    document.getElementById('modal').classList.remove('show');
+    document.getElementById('shiftHours').value = 7;
+    document.getElementById('shiftRate').value = 13;
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', resetAll);
+
+  // Quick rate presets based on type
+  document.getElementById('shiftType').addEventListener('change', (e) => {
+    if (e.target.value === 'hupple') document.getElementById('shiftRate').value = 13;
+    else if (e.target.value === 'packer') document.getElementById('shiftRate').value = 14;
+    else document.getElementById('shiftRate').value = 17;
+  });
+
+  // Init
+  render();
+</script>
+</body>
+</html>
