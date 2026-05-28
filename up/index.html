@@ -123,6 +123,7 @@
     }
     .shift-dot.hupple { background: #22c55e; }
     .shift-dot.packer { background: #3b82f6; }
+    .shift-dot.job17 { background: #a855f7; }
     .shift-dot.other { background: #a855f7; }
     .shift-name { font-size: 0.85rem; color: #ccc; }
     .shift-date { font-size: 0.7rem; color: #555; }
@@ -312,14 +313,15 @@
     <h3>Log shift</h3>
     <label>Type</label>
     <select id="shiftType">
-      <option value="hupple">Hupple</option>
-      <option value="packer">Packer</option>
+      <option value="hupple">Hupple (€17/h)</option>
+      <option value="packer">Packer (€14/h)</option>
+      <option value="job17">€17-job</option>
       <option value="other">Other</option>
     </select>
     <label>Hours</label>
     <input type="number" id="shiftHours" step="0.5" min="0" value="7">
     <label>Rate (€/h)</label>
-    <input type="number" id="shiftRate" step="0.5" min="0" value="13">
+    <input type="number" id="shiftRate" step="0.5" min="0" value="17">
     <div class="btn-row">
       <button class="btn-cancel" id="modalCancel">Cancel</button>
       <button class="btn-save" id="modalSave">+ Add</button>
@@ -374,8 +376,8 @@
     } else {
       list.innerHTML = [...shifts].reverse().map((sh, i) => {
         const isHupple = sh.type === 'hupple';
-        const dotClass = sh.type === 'hupple' ? 'hupple' : sh.type === 'packer' ? 'packer' : 'other';
-        const label = sh.type === 'hupple' ? 'Hupple' : sh.type === 'packer' ? 'Packer' : 'Other';
+        const dotClass = sh.type === 'hupple' ? 'hupple' : sh.type === 'packer' ? 'packer' : sh.type === 'job17' ? 'job17' : 'other';
+        const label = sh.type === 'hupple' ? 'Hupple' : sh.type === 'packer' ? 'Packer' : sh.type === 'job17' ? '€17-job' : 'Other';
         const dateStr = sh.date || 'today';
         return `<li class="shift-item">
           <div class="shift-left">
@@ -439,8 +441,9 @@
 
   // Quick rate presets based on type
   document.getElementById('shiftType').addEventListener('change', (e) => {
-    if (e.target.value === 'hupple') document.getElementById('shiftRate').value = 13;
+    if (e.target.value === 'hupple') document.getElementById('shiftRate').value = 17;
     else if (e.target.value === 'packer') document.getElementById('shiftRate').value = 14;
+    else if (e.target.value === 'job17') document.getElementById('shiftRate').value = 17;
     else document.getElementById('shiftRate').value = 17;
   });
 
