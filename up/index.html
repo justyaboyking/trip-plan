@@ -123,6 +123,7 @@
     }
     .shift-dot.hupple { background: #22c55e; }
     .shift-dot.packer { background: #3b82f6; }
+    .shift-dot.veys { background: #f59e0b; }
     .shift-dot.job17 { background: #a855f7; }
     .shift-dot.other { background: #a855f7; }
     .shift-name { font-size: 0.85rem; color: #ccc; }
@@ -314,7 +315,8 @@
     <label>Type</label>
     <select id="shiftType">
       <option value="hupple">Hupple (€17/h)</option>
-      <option value="packer">Packer (€14/h)</option>
+      <option value="packer">Wasserij (€14/h)</option>
+      <option value="veys">Veys (€14.70/h)</option>
       <option value="job17">€17-job</option>
       <option value="other">Other</option>
     </select>
@@ -335,7 +337,22 @@
 
   function loadShifts() {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
+    if (raw) return JSON.parse(raw);
+    
+    // Seed with known schedule
+    const seed = [];
+    let sid = Date.now();
+    const addSeed = (m, d, type, hours, rate) => {
+      const amt = Math.round(hours * rate);
+      seed.push({ id: sid++, type, hours, rate, amount: amt, date: `${d} ${m}`, timestamp: `2026-06-${String(d).padStart(2,'0')}T06:00:00Z` });
+    };
+    
+    // June — Wasserij elke maandag, Veys elke dinsdag
+    [1,8,15,22,29].forEach(d => addSeed('Jun', d, 'packer', 6, 14));
+    [2,9,16,23,30].forEach(d => addSeed('Jun', d, 'veys', 6.5, 14.70));
+    
+    saveShifts(seed);
+    return seed;
   }
 
   function saveShifts(shifts) {
@@ -376,8 +393,8 @@
     } else {
       list.innerHTML = [...shifts].reverse().map((sh, i) => {
         const isHupple = sh.type === 'hupple';
-        const dotClass = sh.type === 'hupple' ? 'hupple' : sh.type === 'packer' ? 'packer' : sh.type === 'job17' ? 'job17' : 'other';
-        const label = sh.type === 'hupple' ? 'Hupple' : sh.type === 'packer' ? 'Packer' : sh.type === 'job17' ? '€17-job' : 'Other';
+        const dotClass = sh.type === 'hupple' ? 'hupple' : sh.type === 'packer' ? 'packer' : sh.type === 'veys' ? 'veys' : sh.type === 'job17' ? 'job17' : 'other';
+        const label = sh.type === 'hupple' ? 'Hupple' : sh.type === 'packer' ? 'Wasserij' : sh.type === 'veys' ? 'Veys' : sh.type === 'job17' ? '€17-job' : 'Other';
         const dateStr = sh.date || 'today';
         return `<li class="shift-item">
           <div class="shift-left">
@@ -433,8 +450,8 @@
     if (hours <= 0 || rate <= 0) return;
     addShift(type, hours, rate);
     document.getElementById('modal').classList.remove('show');
-    document.getElementById('shiftHours').value = 7;
-    document.getElementById('shiftRate').value = 13;
+    document.getElementById('shiftHours').value = 6;
+    document.getElementById('shiftRate').value = 14;
   });
 
   document.getElementById('resetBtn').addEventListener('click', resetAll);
@@ -443,6 +460,7 @@
   document.getElementById('shiftType').addEventListener('change', (e) => {
     if (e.target.value === 'hupple') document.getElementById('shiftRate').value = 17;
     else if (e.target.value === 'packer') document.getElementById('shiftRate').value = 14;
+    else if (e.target.value === 'veys') document.getElementById('shiftRate').value = 14.7;
     else if (e.target.value === 'job17') document.getElementById('shiftRate').value = 17;
     else document.getElementById('shiftRate').value = 17;
   });
