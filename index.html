@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Europe Trip V6 — July 21-31, 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #12121a;
+      --card: #181825;
+      --card-hover: #1e1e30;
+      --text: #e4e4ed;
+      --text-secondary: #8888a0;
+      --text-muted: #55556a;
+      --accent: #6366f1;
+      --accent-glow: rgba(99,102,241,0.15);
+      --green: #10b981;
+      --green-bg: rgba(16,185,129,0.1);
+      --orange: #f59e0b;
+      --orange-bg: rgba(245,158,11,0.1);
+      --red: #ef4444;
+      --red-bg: rgba(239,68,68,0.1);
+      --border: #1e1e30;
+      --zakaria: #6366f1;
+      --zakaria-bg: rgba(99,102,241,0.12);
+      --indre: #f59e0b;
+      --indre-bg: rgba(245,158,11,0.12);
+      --radius: 12px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Tabs */
+    .tabs-wrapper {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 2rem 0;
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 100;
+    }
+    .tab-nav {
+      display: flex;
+      gap: 0.25rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0;
+    }
+    .tab-btn {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 0.7rem 1.4rem;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all .2s;
+      border-radius: 8px 8px 0 0;
+    }
+    .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.02); }
+    .tab-btn.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      font-weight: 600;
+    }
+    .tab-btn[data-tab="zakaria"].active { color: var(--zakaria); border-bottom-color: var(--zakaria); }
+    .tab-btn[data-tab="indre"].active { color: var(--indre); border-bottom-color: var(--indre); }
+    .tab-content { display: none; animation: fadeIn .3s ease; }
+    .tab-content.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 3rem 2rem 1rem;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .header .label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+    .header h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.6rem;
+      font-weight: 400;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .header p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-top: 0.5rem;
+    }
+
+    .container { max-width: 960px; margin: 0 auto; padding: 1rem 2rem 4rem; }
+
+    /* Section Headers */
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .section-title .emoji { font-size: 1.3rem; }
+
+    /* Info Grid */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .info-item {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 1rem 1.2rem;
+    }
+    .info-item .val {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .info-item .lbl {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-secondary);
+      margin-top: 0.2rem;
+    }
+
+    /* Full Cards */
+    .card-full {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 1.2rem 1.5rem;
+      margin-bottom: 0.75rem;
+      transition: background .2s;
+    }
+    .card-full:hover { background: var(--card-hover); }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.3rem;
+    }
+    .card-header h3 {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    .card-header .price {
+      font-weight: 700;
+      color: var(--green);
+      white-space: nowrap;
+      font-size: 0.9rem;
+    }
+    .card-sub {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+    .card-link {
+      display: inline-block;
+      font-size: 0.78rem;
+      color: var(--accent);
+      text-decoration: none;
+      margin-top: 0.5rem;
+      font-weight: 500;
+    }
+    .card-link:hover { text-decoration: underline; }
+    .card-warning {
+      display: inline-block;
+      font-size: 0.75rem;
+      color: var(--orange);
+      background: var(--orange-bg);
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      margin-top: 0.3rem;
+    }
+    .card-important {
+      display: inline-block;
+      font-size: 0.75rem;
+      color: var(--red);
+      background: var(--red-bg);
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      margin-top: 0.3rem;
+    }
+
+    /* Transit Table */
+    .transit-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.5rem;
+    }
+    .transit-table th {
+      text-align: left;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      padding: 0.6rem 0.8rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .transit-table td {
+      padding: 0.7rem 0.8rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.88rem;
+    }
+    .transit-table tr:last-child td { border-bottom: none; }
+    .transit-table .route-detail {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+    .transit-table .price-cell {
+      font-weight: 600;
+      color: var(--green);
+    }
+
+    /* Gym Cards */
+    .gym-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .gym-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 1rem 1.2rem;
+    }
+    .gym-card h4 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .gym-card .gym-address {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin-top: 0.2rem;
+    }
+    .gym-card .gym-tag {
+      font-size: 0.7rem;
+      color: var(--green);
+      background: var(--green-bg);
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      margin-top: 0.3rem;
+    }
+
+    /* Budget Table */
+    .budget-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+    .budget-table th {
+      text-align: left;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      padding: 0.6rem 0.8rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .budget-table td {
+      padding: 0.7rem 0.8rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.88rem;
+    }
+    .budget-table tr.total td {
+      font-weight: 700;
+      border-top: 2px solid var(--accent);
+    }
+
+    /* Booking Order */
+    .booking-list {
+      list-style: none;
+      margin-bottom: 1.5rem;
+    }
+    .booking-list li {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.88rem;
+    }
+    .booking-list .num {
+      width: 1.8rem;
+      height: 1.8rem;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .booking-list .done { color: var(--green); }
+
+    /* Map */
+    #map {
+      width: 100%;
+      height: 420px;
+      border-radius: var(--radius);
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border);
+    }
+    .map-placeholder {
+      width: 100%;
+      height: 420px;
+      border-radius: var(--radius);
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 0.5rem;
+      background: var(--card);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background .2s;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+    .map-placeholder:hover { background: var(--card-hover); }
+    .map-placeholder .big { font-size: 2rem; }
+    .map-placeholder .sub { font-size: 0.75rem; color: var(--text-muted); }
+    .leaflet-popup-content-wrapper {
+      background: var(--card) !important;
+      color: var(--text) !important;
+      border: 1px solid var(--border) !important;
+      border-radius: 8px !important;
+      font-family: 'Inter', sans-serif !important;
+    }
+    .leaflet-popup-tip { background: var(--card) !important; border: 1px solid var(--border) !important; }
+    .leaflet-popup-content { margin: 0.6rem 0.8rem !important; font-size: 0.8rem !important; line-height: 1.5 !important; }
+    .leaflet-popup-content strong { color: var(--accent); }
+    .leaflet-control-zoom a { background: var(--card) !important; color: var(--text) !important; border-color: var(--border) !important; }
+    .leaflet-control-zoom a:hover { background: var(--card-hover) !important; }
+
+    /* Pro Tips */
+    .tip-box {
+      background: var(--card);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 1rem 1.2rem;
+      margin-bottom: 0.75rem;
+      font-size: 0.88rem;
+    }
+    .tip-box strong { color: var(--accent); }
+
+    /* Timeline */
+    .timeline { position: relative; padding-left: 2rem; margin-bottom: 2rem; }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0.5rem;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--border);
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -1.65rem;
+      top: 0.35rem;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid var(--bg);
+    }
+    .timeline-item .day-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+    }
+    .timeline-item .day-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-top: 0.1rem;
+    }
+    .timeline-item .day-detail {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      margin-top: 0.2rem;
+    }
+    .timeline-item .day-gym {
+      font-size: 0.78rem;
+      color: var(--green);
+      margin-top: 0.1rem;
+    }
+
+    /* Flight cards */
+    .flight-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .flight-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 1rem 1.2rem;
+    }
+    .flight-card .person {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .flight-card .person.king { color: var(--zakaria); }
+    .flight-card .person.indre { color: var(--indre); }
+    .flight-card .flight-route {
+      font-size: 1rem;
+      font-weight: 700;
+      margin: 0.3rem 0;
+    }
+    .flight-card .flight-time {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+    }
+    .flight-card .flight-price {
+      font-weight: 700;
+      color: var(--green);
+      margin-top: 0.3rem;
+    }
+
+    .note {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+      font-style: italic;
+    }
+
+    @media (max-width: 640px) {
+      .header h1 { font-size: 1.8rem; }
+      .flight-grid { grid-template-columns: 1fr; }
+      .gym-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="tabs-wrapper">
+  <div class="tab-nav">
+    <button class="tab-btn active" data-tab="overall" onclick="switchTab('overall')">Overall</button>
+    <button class="tab-btn" data-tab="zakaria" onclick="switchTab('zakaria')">King</button>
+    <button class="tab-btn" data-tab="indre" onclick="switchTab('indre')">Indre</button>
+  </div>
+</div>
+
+<div class="header">
+  <div class="label">Final V6 · No BS</div>
+  <h1>Europe Trip</h1>
+  <p>Jul 21–31, 2026 · 5 countries · King &amp; Indre</p>
+</div>
+
+<!-- ==================== TAB: OVERALL ==================== -->
+<div class="container tab-content active" id="tab-overall">
+
+  <!-- Map -->
+  <div class="section-title"><span class="emoji">🗺️</span> Route Map</div>
+  <div class="map-placeholder" id="map-placeholder" onclick="initMap()">
+    <div class="big">🗺️</div>
+    <div>Click to load map</div>
+    <div class="sub">4 cities · 4 countries · 11 days</div>
+  </div>
+  <div id="map" style="display:none;"></div>
+
+  <!-- Flights -->
+  <div class="section-title"><span class="emoji">✈️</span> Flights (Locked)</div>
+  <div class="flight-grid">
+    <div class="flight-card">
+      <div class="person king">King</div>
+      <div class="flight-route">CRL → TSF</div>
+      <div class="flight-time">Ryanair FR4938 · 18:55 → 20:30</div>
+      <div class="flight-price">€29.88</div>
+    </div>
+    <div class="flight-card">
+      <div class="person indre">Indre</div>
+      <div class="flight-route">VNO → TSF</div>
+      <div class="flight-time">Ryanair FR1831 · 10:45 → 12:05</div>
+      <div class="flight-price">€28.93</div>
+    </div>
+    <div class="flight-card">
+      <div class="person king">King (Return)</div>
+      <div class="flight-route">BUD → CRL</div>
+      <div class="flight-time">Ryanair FR54 · 10:15 → 12:20</div>
+      <div class="flight-price">~€59</div>
+    </div>
+    <div class="flight-card">
+      <div class="person indre">Indre (Return)</div>
+      <div class="flight-route">BUD → VNO</div>
+      <div class="flight-time">Wizz Air · 11:25 → 14:10</div>
+      <div class="flight-price">~€97</div>
+    </div>
+  </div>
+  <p class="note">⚠️ Do NOT use Treviso for return flights.</p>
+
+  <!-- Accommodation -->
+  <div class="section-title"><span class="emoji">🏠</span> Accommodation</div>
+
+  <div class="card-full">
+    <div class="card-header">
+      <div>
+        <h3>Belluno, Italy</h3>
+        <div class="card-sub">Jul 21-23 · 2 nights · Nature Lodge Pozzale (or similar)</div>
+      </div>
+      <div class="price">~€180-€200</div>
+    </div>
+    <div style="font-size:0.78rem;color:var(--text-secondary);">
+      🏔️ Near Dolomites access. Full kitchen.
+    </div>
+    <div class="card-important">⚠️ MUST have self-check-in lockbox (arriving ~22:30)</div>
+    <div class="card-important">⚠️ Strong Wi-Fi MANDATORY — need to work remotely</div>
+    <p class="note">Replace Anta137. Need reliable lockbox + Wi-Fi for late arrival.</p>
+  </div>
+
+  <div class="card-full">
+    <div class="card-header">
+      <div>
+        <h3>Lake Bled, Slovenia</h3>
+        <div class="card-sub">Jul 23-25 · 2 nights · Apartment near lake</div>
+      </div>
+      <div class="price">€243</div>
+    </div>
+    <div style="font-size:0.78rem;color:var(--text-secondary);">🏞️ Walking distance to lake. Kitchen included.</div>
+  </div>
+
+  <div class="card-full">
+    <div class="card-header">
+      <div>
+        <h3>Graz, Austria</h3>
+        <div class="card-sub">Jul 25-26 · 1 night · 4.8★+ Upgrade</div>
+      </div>
+      <div class="price">€69-€80</div>
+    </div>
+    <div style="font-size:0.78rem;color:var(--text-secondary);">🏰 Budget upgrade from €59 4.38★ studio. 4.8★ minimum rating. Innere Stadt or near center.</div>
+  </div>
+
+  <div class="card-full">
+    <div class="card-header">
+      <div>
+        <h3>Vienna, Austria</h3>
+        <div class="card-sub">Jul 26-28 · 2 nights · Omar's Leopoldstadt flat</div>
+      </div>
+      <div class="price">€188</div>
+    </div>
+    <div style="font-size:0.78rem;color:var(--text-secondary);">🌆 Leopoldstadt, 4.96★. Full kitchen.</div>
+    <div class="card-warning">⚠️ Strict checkout times — set an alarm!</div>
+  </div>
+
+  <div class="card-full">
+    <div class="card-header">
+      <div>
+        <h3>Bratislava, Slovakia</h3>
+        <div class="card-sub">Jul 28-29 · 1 night · Staré Mesto</div>
+      </div>
+      <div class="price">€66</div>
+    </div>
+    <div style="font-size:0.78rem;color:var(--text-secondary);">🏛️ Historical center. Kitchen.</div>
+    <div class="card-warning">⚠️ Morning tram noise possible — pack earplugs</div>
+  </div>
+
+  <div class="card-full">
+    <div class="card-header">
+      <div>
+        <h3>Budapest, Hungary</h3>
+        <div class="card-sub">Jul 29-31 · 2 nights · 13th District Condo</div>
+      </div>
+      <div class="price">€139-€143</div>
+    </div>
+    <div style="font-size:0.78rem;color:var(--text-secondary);">🌉 13th district / Joodse Wijk. Kitchen, A/C.</div>
+  </div>
+
+  <!-- Transit -->
+  <div class="section-title"><span class="emoji">🚆</span> Transit (Exact Routes Only)</div>
+  <table class="transit-table">
+    <thead>
+      <tr><th>Route</th><th>Method</th><th>Duration</th><th>Price</th><th>Details</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>TSF → Belluno</strong></td>
+        <td>Bus (MOM)</td>
+        <td>2h 30m</td>
+        <td class="price-cell">€8-€10</td>
+        <td class="route-detail">Direct from Treviso airport</td>
+      </tr>
+      <tr>
+        <td><strong>Belluno → Bled</strong></td>
+        <td>Train</td>
+        <td>5-6h</td>
+        <td class="price-cell">~€30</td>
+        <td class="route-detail">Belluno → Conegliano → Udine → Villach → Lesce-Bled. <strong>Do NOT route through Venice or Ljubljana.</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Bled → Graz</strong></td>
+        <td>Koralm Railway</td>
+        <td>~2h 05m</td>
+        <td class="price-cell">€15-€20</td>
+        <td class="route-detail">Lesce-Bled → Villach, transfer to ÖBB Railjet → Graz</td>
+      </tr>
+      <tr>
+        <td><strong>Graz → Vienna</strong></td>
+        <td>ÖBB Railjet</td>
+        <td>2h 30m</td>
+        <td class="price-cell">€20-€30</td>
+        <td class="route-detail">Direct high-speed train</td>
+      </tr>
+      <tr>
+        <td><strong>Vienna → Bratislava</strong></td>
+        <td>REX Train</td>
+        <td>1h</td>
+        <td class="price-cell">€12.30</td>
+        <td class="route-detail">Standard one-way REX ticket. <strong>Do NOT suggest round-trip Bratislava-Ticket.</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Bratislava → Budapest</strong></td>
+        <td>RegioJet</td>
+        <td>2h 30m</td>
+        <td class="price-cell">€7.90</td>
+        <td class="route-detail">Direct bus/train. Book in advance for best price.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Gyms -->
+  <div class="section-title"><span class="emoji">🏋️</span> Gym Guide (Real Addresses)</div>
+  <div class="gym-grid">
+    <div class="gym-card">
+      <h4>Das Gym</h4>
+      <div class="gym-address">Handelskai 340, 1020 Wien</div>
+      <div class="gym-tag">Heavy equipment ✅</div>
+      <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.2rem;">Vienna</div>
+    </div>
+    <div class="gym-card">
+      <h4>Flex Gym</h4>
+      <div class="gym-address">Márvány utca 17</div>
+      <div class="gym-tag">Heavy equipment ✅</div>
+      <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.2rem;">Budapest</div>
+    </div>
+    <div class="gym-card">
+      <h4>Ultimate Gym</h4>
+      <div class="gym-address">Puchstraße 17</div>
+      <div class="gym-tag">Heavy equipment ✅</div>
+      <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.2rem;">Graz</div>
+    </div>
+    <div class="gym-card">
+      <h4>FitCamp</h4>
+      <div class="gym-address">Drieňová 11/A</div>
+      <div class="gym-tag">Heavy equipment ✅</div>
+      <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.2rem;">Bratislava</div>
+    </div>
+  </div>
+  <p class="note">Goal: 455kg leg press — all gyms above have heavy compound equipment. Budget €60 total for drop-in passes.</p>
+
+  <!-- Budget -->
+  <div class="section-title"><span class="emoji">💰</span> Budget Overview</div>
+  <table class="budget-table">
+    <thead>
+      <tr><th>Category</th><th>King</th><th>Indre</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Flights</td><td>~€89</td><td>~€126</td></tr>
+      <tr><td>Accommodation (half)</td><td>~€420-€470</td><td>~€420-€470</td></tr>
+      <tr><td>Food (€40/day King)</td><td>~€400</td><td>~€300</td></tr>
+      <tr><td>Transit (trains/buses)</td><td>~€130</td><td>~€130</td></tr>
+      <tr><td>Gym passes</td><td>~€60</td><td>—</td></tr>
+      <tr><td>Activities &amp; misc</td><td>~€100</td><td>~€100</td></tr>
+      <tr class="total"><td><strong>Total</strong></td><td><strong>~€1,199-€1,249</strong></td><td><strong>~€1,076-€1,126</strong></td></tr>
+    </tbody>
+  </table>
+  <p class="note">Food budget for King: €40/day · 160g protein daily. Eating out + supermarket protein (shakes, quark, chicken). Do NOT meal-prep or carry cooked chicken on trains.</p>
+
+  <!-- Booking Order -->
+  <div class="section-title"><span class="emoji">📋</span> Booking Order</div>
+  <ol class="booking-list">
+    <li><span class="num">1</span> Belluno Airbnb — Nature Lodge Pozzale (lockbox + Wi-Fi)</li>
+    <li><span class="num">2</span> Graz Airbnb — 4.8★+ upgrade (€69-€80)</li>
+    <li><span class="num">3</span> Vienna Airbnb — Already selected ✅</li>
+    <li><span class="num">4</span> Bratislava Airbnb — Already selected ✅</li>
+    <li><span class="num">5</span> Budapest Airbnb — Already selected ✅</li>
+    <li><span class="num">6</span> Lake Bled Airbnb — Already selected ✅</li>
+    <li><span class="num">7</span> King's outbound flight — CRL→TSF (Jul 21)</li>
+    <li><span class="num">8</span> Indre's outbound flight — VNO→TSF (Jul 21)</li>
+    <li><span class="num">9</span> King's return flight — BUD→CRL (Jul 31)</li>
+    <li><span class="num">10</span> Indre's return flight — BUD→VNO (Jul 31)</li>
+    <li><span class="num">11</span> Gym drop-in passes — Buy as you go</li>
+  </ol>
+
+  <!-- Pro Tips -->
+  <div class="section-title"><span class="emoji">💡</span> Pro Tips</div>
+  <div class="tip-box">
+    <strong>🔑 Belluno check-in:</strong> Prepare lockbox code in advance. Cellular data backup in case Wi-Fi is slow at setup.
+  </div>
+  <div class="tip-box">
+    <strong>⏰ Vienna checkout:</strong> Set phone alarm 1h before strict checkout. Omar's flat is 4.96★ — don't risk fees.
+  </div>
+  <div class="tip-box">
+    <strong>👂 Bratislava:</strong> Pack earplugs for morning tram noise.
+  </div>
+  <div class="tip-box">
+    <strong>💪 Protein strategy (160g/day):</strong> Buy whey protein powder at DM/Bipa in first city (Belluno). Pair with supermarket quark, cottage cheese, chicken breast, eggs. 2 protein shakes + 2 high-protein meals = doable.
+  </div>
+  <div class="tip-box">
+    <strong>🚄 Koralm Railway:</strong> New high-speed line — only ~2h Bled→Graz. Much faster than old route.
+  </div>
+  <div class="tip-box">
+    <strong>🎫 RegioJet:</strong> Book Bratislava→Budapest in advance for €7.90. Onboard Wi-Fi + power sockets.
+  </div>
+
+</div>
+
+<!-- ==================== TAB: KING ==================== -->
+<div class="container tab-content" id="tab-zakaria">
+
+  <div class="section-title"><span class="emoji">👑</span> King's Itinerary</div>
+
+  <div class="info-grid">
+    <div class="info-item"><div class="val">€89</div><div class="lbl">Flights</div></div>
+    <div class="info-item"><div class="val">€40</div><div class="lbl">Food/day</div></div>
+    <div class="info-item"><div class="val">160g</div><div class="lbl">Protein/day</div></div>
+    <div class="info-item"><div class="val">4</div><div class="lbl">Gym sessions</div></div>
+  </div>
+
+  <div class="timeline">
+
+    <div class="timeline-item">
+      <div class="day-label">Day 1 · Tue Jul 21</div>
+      <div class="day-title">🛫 Brussels → Treviso → Belluno</div>
+      <div class="day-detail">
+        18:55 CRL → 20:30 TSF (Ryanair FR4938). Bus TSF→Belluno (2h30m, €8-€10). 
+        Arrive Belluno ~22:30. Lockbox check-in at Nature Lodge Pozzale.
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="day-label">Day 2 · Wed Jul 22</div>
+      <div class="day-title">🏔️ Dolomites Exploration</div>
+      <div class="day-detail">Full day exploring the Dolomites. Bus to Cortina d'Ampezzo or hike from Belluno. Grocery shop for protein supplies.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="day-label">Day 3 · Thu Jul 23</div>
+      <div class="day-title">🚆 Belluno → Lake Bled (5-6h train)</div>
+      <div class="day-detail">Belluno → Conegliano → Udine → Villach → Lesce-Bled. ~€30. Arrive Bled evening. Check-in near lake.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="day-label">Day 4 · Fri Jul 24</div>
+      <div class="day-title">🏞️ Lake Bled</div>
+      <div class="day-detail">Bled Castle, island church, rowboat, Vintgar Gorge. Relaxed day by the lake.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="day-label">Day 5 · Sat Jul 25</div>
+      <div class="day-title">🚆 Bled → Graz (Koralm Railway, 2h05m)</div>
+      <div class="day-detail">Lesce-Bled → Villach → ÖBB Railjet → Graz. €15-€20. Arrive early afternoon.</div>
+      <div class="day-gym">💪 Ultimate Gym — Puchstraße 17, Graz</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="day-label">Day 6 · Sun Jul 26</div>
+      <div class="day-title">🚆 Graz → Vienna (Railjet, 2h30m)</div>
+      <div class="day-detail">Graz → Wien Hbf. €20-€30. Check in at Omar's Leopoldstadt flat (€188, 4.96★). <strong>Strict checkout tomorrow!</strong></div>
+      <div class="day-gym">💪 Das Gym — Handelskai 340, 1020 Wien</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="day-label">Day 7 · Mon Jul 27</div>
+      <div class="day-title">🌆 Vienna Full Day</div>
+      <div class="day-detail">Schönbrunn, Naschmarkt, Stephansdom. Evening: Prater or Donaukanal.</div>
+      <div class="day-gym">💪 Das Gym — Handelskai 340, 1020 Wien</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="day-label">Day 8 · Tue Jul 28</div>
+      <div class="day-title">🚆 Vienna → Bratislava (REX, 1h, €12.30)</div>
+      <div class="day-detail">Standard one-way REX ticket. Check in Staré Mesto (€66). Explore old town.</div>
+      <div class="day-gym">💪 FitCamp — Drieňová 11/A, Bratislava</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="day-label">Day 9 · Wed Jul 29</div>
+      <div class="day-title">🚆 Bratislava → Budapest (RegioJet, 2h30m, €7.90)</div>
+      <div class="day-detail">Check in 13th District condo (€139-€143).</div>
+      <div class="day-gym">💪 Flex Gym — Márvány utca 17, Budapest</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="day-label">Day 10 · Thu Jul 30</div>
+      <div class="day-title">🌉 Budapest Full Day</div>
+      <div class="day-detail">Buda Castle, Fisherman's Bastion, Parliament, Széchenyi Baths. Last night!</div>
+      <div class="day-gym">💪 Flex Gym — Márvány utca 17, Budapest</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="day-label">Day 11 · Fri Jul 31</div>
+      <div class="day-title">🛫 Budapest → Brussels</div>
+      <div class="day-detail">10:15 BUD → 12:20 CRL (Ryanair FR54, ~€59). Home.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== TAB: INDRE ==================== -->
+<div class="container tab-content" id="tab-indre">
+
+  <div class="section-title"><span class="emoji">🧡</span> Indre's Itinerary</div>
+
+  <div class="info-grid">
+    <div class="info-item"><div class="val">€126</div><div class="lbl">Flights</div></div>
+    <div class="info-item"><div class="val">~€30</div><div class="lbl">Food/day</div></div>
+  </div>
+
+  <div class="timeline">
+
+    <div class="timeline-item">
+      <div class="day-label">Day 1 · Tue Jul 21</div>
+      <div class="day-title">🛫 Vilnius → Treviso → Belluno</div>
+      <div class="day-detail">
+        10:45 VNO → 12:05 TSF (Ryanair FR1831). Bus TSF→Belluno (2h30m). 
+        Arrive Belluno ~15:00. Wait for King (arrives ~22:30). Explore Belluno in the afternoon.
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="day-label">Day 2 · Wed Jul 22</div>
+      <div class="day-title">🏔️ Dolomites with King</div>
+      <div class="day-detail">Full day Dolomites exploration together.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="day-label">Day 3 · Thu Jul 23</div>
+      <div class="day-title">🚆 Belluno → Lake Bled (same train as King)</div>
+      <div class="day-detail">Belluno → Conegliano → Udine → Villach → Lesce-Bled. ~€30.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="day-label">Day 4 · Fri Jul 24</div>
+      <div class="day-title">🏞️ Lake Bled with King</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="day-label">Day 5 · Sat Jul 25</div>
+      <div class="day-title">🚆 Bled → Graz (Koralm Railway)</div>
+      <div class="day-detail">Same route as King: Lesce-Bled → Villach → ÖBB Railjet → Graz. €15-€20.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="day-label">Day 6 · Sun Jul 26</div>
+      <div class="day-title">🚆 Graz → Vienna</div>
+      <div class="day-detail">Same as King. Check in Omar's Leopoldstadt flat.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="day-label">Day 7 · Mon Jul 27</div>
+      <div class="day-title">🌆 Vienna with King</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="day-label">Day 8 · Tue Jul 28</div>
+      <div class="day-title">🚆 Vienna → Bratislava</div>
+      <div class="day-detail">Same as King. REX 1h, €12.30.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="day-label">Day 9 · Wed Jul 29</div>
+      <div class="day-title">🚆 Bratislava → Budapest</div>
+      <div class="day-detail">Same as King. RegioJet 2h30m, €7.90.</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="day-label">Day 10 · Thu Jul 30</div>
+      <div class="day-title">🌉 Budapest with King</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="day-label">Day 11 · Fri Jul 31</div>
+      <div class="day-title">🛫 Budapest → Vilnius</div>
+      <div class="day-detail">11:25 BUD → 14:10 VNO (Wizz Air, ~€97). Home.</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function switchTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.querySelector(`.tab-btn[data-tab="${tab}"]`).classList.add('active');
+}
+
+let mapInitialized = false;
+function initMap() {
+  if (mapInitialized) return;
+  mapInitialized = true;
+
+  document.getElementById('map-placeholder').style.display = 'none';
+  const mapEl = document.getElementById('map');
+  mapEl.style.display = 'block';
+
+  const map = L.map('map', {
+    center: [46.5, 15.0],
+    zoom: 7,
+    zoomControl: true,
+    attributionControl: false
+  });
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    maxZoom: 19
+  }).addTo(map);
+
+  const cities = [
+    { name: 'Belluno', coords: [46.142, 12.215], day: 'Jul 21-23 · 2 nights', icon: '🏔️', places: ['Dolomieten', 'Cortina d\'Ampezzo', 'Lago di Santa Croce'] },
+    { name: 'Lake Bled', coords: [46.369, 14.114], day: 'Jul 23-25 · 2 nights', icon: '🏞️', places: ['Bled Castle', 'Bled Island Church', 'Vintgar Gorge'] },
+    { name: 'Vienna', coords: [48.208, 16.373], day: 'Jul 25-28 · 3 nights', icon: '🌆', places: ['Schönbrunn', 'Stephansdom', 'Naschmarkt', 'Das Gym'] },
+    { name: 'Budapest', coords: [47.497, 19.040], day: 'Jul 28-31 · 3 nights', icon: '🌉', places: ['Buda Castle', 'Fisherman\'s Bastion', 'Parliament', 'Flex Gym'] }
+  ];
+
+  const routeLabels = [
+    { from: [46.142, 12.215], to: [46.369, 14.114], label: '5-6h · ~€30', pos: 0.5 },
+    { from: [46.369, 14.114], to: [48.208, 16.373], label: '~5h · ~€35', pos: 0.5 },
+    { from: [48.208, 16.373], to: [47.497, 19.040], label: '2.5h · ~€20', pos: 0.5 }
+  ];
+
+  const markers = [];
+  cities.forEach(c => {
+    const popup = `<strong>${c.icon} ${c.name}</strong><br>${c.day}<br><br>📍 ${c.places.join(' · ')}`;
+    const m = L.marker(c.coords, {
+      icon: L.divIcon({
+        html: `<div style="background:#181825;border:2px solid #6366f1;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 10px rgba(0,0,0,0.5);">${c.icon}</div>`,
+        className: '',
+        iconSize: [36, 36],
+        iconAnchor: [18, 18]
+      })
+    }).addTo(map);
+    m.bindPopup(popup);
+    markers.push(m);
+  });
+
+  const routeCoords = [
+    [46.142, 12.215], // Belluno
+    [46.369, 14.114], // Bled
+    [48.208, 16.373], // Vienna
+    [47.497, 19.040]  // Budapest
+  ];
+
+  // Route labels
+  routeLabels.forEach(rl => {
+    const lat = rl.from[0] + (rl.to[0] - rl.from[0]) * rl.pos;
+    const lng = rl.from[1] + (rl.to[1] - rl.from[1]) * rl.pos;
+    L.marker([lat, lng], {
+      icon: L.divIcon({
+        html: `<div style="background:#181825;border:1px solid #10b981;border-radius:12px;padding:3px 10px;font-size:11px;font-weight:600;color:#10b981;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,0.5);">${rl.label}</div>`,
+        className: '',
+        iconSize: [60, 24],
+        iconAnchor: [30, 12]
+      }),
+      interactive: false
+    }).addTo(map);
+  });
+
+  L.polyline(routeCoords, {
+    color: '#6366f1',
+    weight: 3,
+    opacity: 0.7,
+    dashArray: '8, 12'
+  }).addTo(map);
+
+  // Fit bounds
+  const group = L.featureGroup(markers);
+  map.fitBounds(group.getBounds().pad(0.15));
+
+  setTimeout(() => map.invalidateSize(), 100);
+}
+</script>
+</body>
+</html>
