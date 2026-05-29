@@ -468,6 +468,30 @@
       .flight-grid { grid-template-columns: 1fr; }
       .gym-grid { grid-template-columns: 1fr 1fr; }
     }
+
+    .minimal-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+    }
+    .minimal-table th {
+      text-align: left;
+      padding: 0.5rem 0.75rem;
+      border-bottom: 2px solid var(--border);
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .minimal-table td {
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .minimal-table tbody tr:hover {
+      background: rgba(99, 102, 241, 0.04);
+    }
   </style>
 </head>
 <body>
@@ -477,6 +501,7 @@
     <button class="tab-btn active" data-tab="overall" onclick="switchTab('overall')">Overall</button>
     <button class="tab-btn" data-tab="zakaria" onclick="switchTab('zakaria')">Zakaria</button>
     <button class="tab-btn" data-tab="indre" onclick="switchTab('indre')">Indre</button>
+    <button class="tab-btn" data-tab="alternative" onclick="switchTab('alternative')">Alternative</button>
   </div>
 </div>
 
@@ -912,6 +937,77 @@
     </div>
 
   </div>
+</div>
+
+<!-- ==================== TAB: ALTERNATIVE ==================== -->
+<div class="container tab-content" id="tab-alternative">
+
+  <!-- Route Overview -->
+  <div class="section-title"><span class="emoji">🗺️</span> Alternative Route · Skip Bratislava</div>
+  <p class="note" style="margin-bottom:1rem;">Same start/end cities, but Bratislava becomes a day trip from Vienna. Extra nights in Bled, Vienna &amp; Budapest for a more relaxed pace. <strong>12 days (Jul 21 – Aug 2)</strong></p>
+
+  <table class="minimal-table">
+    <thead>
+      <tr>
+        <th>Stop</th>
+        <th>Nights</th>
+        <th>Dates</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>1. Belluno 🏔️</strong></td><td>2</td><td>Jul 21–23</td></tr>
+      <tr><td><strong>2. Lake Bled 🏞️</strong></td><td>3</td><td>Jul 23–26</td></tr>
+      <tr><td><strong>3. Graz 🏰</strong></td><td>1</td><td>Jul 26–27</td></tr>
+      <tr><td><strong>4. Vienna 🌆</strong></td><td>3</td><td>Jul 27–30</td></tr>
+      <tr><td><strong>5. Budapest 🌉</strong></td><td>3</td><td>Jul 30–Aug 2</td></tr>
+      <tr style="background:var(--border);font-weight:700;"><td><strong>Total</strong></td><td><strong>12</strong></td><td><strong>Jul 21 – Aug 2</strong></td></tr>
+    </tbody>
+  </table>
+
+  <!-- Transit -->
+  <div class="section-title" style="margin-top:1.5rem;"><span class="emoji">🚆</span> Transit</div>
+  <table class="minimal-table">
+    <thead>
+      <tr>
+        <th>Route</th>
+        <th>Method</th>
+        <th>Duration</th>
+        <th>Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>TSF → Belluno</td><td>Bus (MOM)</td><td>2h 30m</td><td>€8-€10</td></tr>
+      <tr><td>Belluno → Bled</td><td>Train</td><td>5-6h</td><td>~€30</td></tr>
+      <tr><td>Bled → Graz</td><td>Koralm Railway</td><td>~2h</td><td>€15-€20</td></tr>
+      <tr><td>Graz → Vienna</td><td>ÖBB Railjet</td><td>2h 30m</td><td>€20-€30</td></tr>
+      <tr><td>Vienna → Budapest</td><td>Railjet</td><td>2h 30m</td><td>~€20</td></tr>
+      <tr><td>Budapest → BUD Airport</td><td>Bus 100E</td><td>40m</td><td>~€2</td></tr>
+      <tr><td colspan="2" style="font-style:italic;color:var(--text-secondary);">Bratislava day trip from Vienna (REX 1h, €12.30)</td><td colspan="2" style="font-style:italic;color:var(--text-secondary);">Optional — not a separate move</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Budget Comparison -->
+  <div class="section-title" style="margin-top:1.5rem;"><span class="emoji">💰</span> Estimated Budget (Zakaria)</div>
+  <table class="minimal-table">
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Flights</td><td>~€109</td></tr>
+      <tr><td>Accommodation (half)</td><td>~€480-€530</td></tr>
+      <tr><td>Food (€40/day × 13 days)</td><td>~€520</td></tr>
+      <tr><td>Transit</td><td>~€100</td></tr>
+      <tr><td>Gym passes</td><td>~€60</td></tr>
+      <tr><td>Activities &amp; misc</td><td>~€120</td></tr>
+      <tr style="background:var(--border);font-weight:700;"><td>Total</td><td>~€1,390-€1,440</td></tr>
+    </tbody>
+  </table>
+
+  <p class="note" style="margin-top:1rem;">🎯 Bratislava is a <strong>day trip</strong> from Vienna (REX 1h, €12.30). No need to pack/unpack. FitCamp gym still accessible.</p>
+
 </div>
 
 <script>
