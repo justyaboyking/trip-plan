@@ -1120,7 +1120,7 @@ function initMap() {
   });
 
   const routeCoords = [
-[45.667, 12.245], // Treviso
+    [45.667, 12.245], // Treviso
     [47.071, 15.439], // Graz
     [48.208, 16.373], // Vienna
     [47.497, 19.040]  // Budapest
@@ -1191,9 +1191,6 @@ function initMapAlt() {
 
   const markers = [];
   cities.forEach(c => {
-
-  const markers = [];
-  cities.forEach(c => {
     const popup = `<strong>${c.icon} ${c.name}</strong><br>${c.day}<br><br>📍 ${c.places.join(' · ')}`;
     const m = L.marker(c.coords, {
       icon: L.divIcon({
@@ -1208,7 +1205,7 @@ function initMapAlt() {
   });
 
   const routeCoords = [
-[45.667, 12.245], // Treviso
+    [45.667, 12.245], // Treviso
     [47.071, 15.439], // Graz
     [48.208, 16.373], // Vienna
     [47.497, 19.040]  // Budapest
